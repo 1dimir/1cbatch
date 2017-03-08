@@ -108,4 +108,6 @@ ECHO Sample:
 ECHO EXE="C:\Program Files (x86)\1cv8\8.3.9.1850\bin\1cv8.exe"
 ECHO RepoPath=tcp://repository_server:port/repo
 ECHO RepoUser=User
-ECHO RepoPass=123123IT /B 1
+ECHO RepoPass=123123
+
+EXIT /B 1
