@@ -7,7 +7,7 @@ SET Version=%~1
 SET Cfg=%2
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
-    SET "ROOT=%temp%\%%F"
+    SET "ROOT=%TEMP%\%%F"
 )
 
 IF NOT DEFINED ROOT (
@@ -33,7 +33,7 @@ chcp 65001 >>%LOG%
 SET CONFIG=%~d0%~p0config.ini
 
 IF NOT EXIST %CONFIG% (
-    ECHO config.ini not fount
+    ECHO config.ini not found
     GOTO :CLEANUP
 )
 
@@ -108,6 +108,4 @@ ECHO Sample:
 ECHO EXE="C:\Program Files (x86)\1cv8\8.3.9.1850\bin\1cv8.exe"
 ECHO RepoPath=tcp://repository_server:port/repo
 ECHO RepoUser=User
-ECHO RepoPass=123123
-
-EXIT /B 1
+ECHO RepoPass=123123IT /B 1
