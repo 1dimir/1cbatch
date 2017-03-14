@@ -69,6 +69,12 @@ temporaty infobase %ROOT%\db created >> %LOG%
 ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
 Configuration loaded >> %LOG%
 
+:: create export dir if not exist
+IF NOT EXIST %Exportdir% (
+    MKDIR %ExportDir%
+    ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% %ExportDir% created >> %LOG%
+)
+
 :: dump to files
 %EXE% DESIGNER ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
