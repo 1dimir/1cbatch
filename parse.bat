@@ -24,8 +24,7 @@ IF EXIST %ROOT% (
 SET LOG=%ROOT%\log.txt
 
 :: log script name
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-%~0 >> %LOG%
+CALL :LOG %LOG% %0
 
 :: set up codepage
 chcp 65001 >>%LOG%
@@ -34,22 +33,20 @@ chcp 65001 >>%LOG%
 SET CONFIG=%~d0%~p0config.ini
 
 IF NOT EXIST %CONFIG% (
-    ECHO config.ini not found
+    CALL :LOG %LOG% "config.ini not found"
     GOTO :CLEANUP
 )
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-config.ini located >> %LOG%
+CALL :LOG %LOG% "config.ini located"
 
 FOR /F "tokens=*" %%A IN ('TYPE "%CONFIG%"') DO SET %%A
 
 IF NOT DEFINED EXE (
-    ECHO EXE is not set in config.ini
+    CALL :LOG %LOG% "EXE is not set in config.ini"
     GOTO :CLEANUP
 )
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-Settings read >> %LOG%
+CALL :LOG %LOG% "Settings read"
 
 :: create temporary infobase
 %EXE% DESIGNER ^
@@ -57,8 +54,7 @@ Settings read >> %LOG%
 /RestoreIB ^
 /Out %LOG% -NoTruncate
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-temporaty infobase %ROOT%\db created >> %LOG%
+CALL :LOG %LOG% "temporaty infobase %ROOT%\db created"
 
 :: load cf
 %EXE% DESIGNER ^
@@ -66,13 +62,12 @@ temporaty infobase %ROOT%\db created >> %LOG%
 /LoadCfg %Cfg% ^
 /Out %LOG% -NoTruncate
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-Configuration loaded >> %LOG%
+CALL :LOG %LOG% "Configuration loaded"
 
 :: create export dir if not exist
 IF NOT EXIST %Exportdir% (
     MKDIR %ExportDir%
-    ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% %ExportDir% created >> %LOG%
+    CALL :LOG %LOG% "%ExportDir% created"
 )
 
 :: dump to files
@@ -81,13 +76,11 @@ IF NOT EXIST %Exportdir% (
 /DumpConfigToFiles "%ExportDir%" ^
 /Out %LOG% -NoTruncate
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-Configuration parsed to %ExportDir% >> %LOG%
+CALL :LOG %LOG% "Configuration parsed to %ExportDir%"
 
 :CLEANUP
 
-ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% ^
-cleanup started >> %LOG%
+CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
 TYPE %LOG% >> %TEMP%\%~n0.log
@@ -109,3 +102,9 @@ ECHO Sample:
 ECHO EXE="C:\Program Files (x86)\1cv8\8.3.9.1850\bin\1cv8.exe"
 
 EXIT /B 1
+
+:LOG
+
+ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% %~2 >> %1
+
+EXIT /B 0
