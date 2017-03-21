@@ -1,5 +1,8 @@
 @ECHO OFF
 
+:: set up codepage
+@CHCP 65001 > Nul
+
 IF [%1]==[/?] GOTO :Usage
 IF [%2]==[] GOTO :Usage
 
@@ -24,9 +27,6 @@ SET LOG=%ROOT%\log.txt
 
 :: log script name
 CALL :LOG %LOG% %0
-
-:: set up codepage
-chcp 65001 >>%LOG%
 
 :: read config
 SET CONFIG=%~d0%~p0config.ini
@@ -63,20 +63,35 @@ CALL :LOG %LOG% "Settings read"
 
 :: create temporary infobase
 %EXE% DESIGNER ^
+/DisableStartupDialogs ^
+/DisableStartupMessages ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
 /RestoreIB ^
 /Out %LOG% -NoTruncate
 
 CALL :LOG %LOG% "temporaty infobase %ROOT%\db created"
 
-:: batch configurator call
-%EXE% DESIGNER ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
-/ConfigurationRepositoryF "%RepoPath%" ^
-/ConfigurationRepositoryN "%RepoUser%" ^
-/ConfigurationRepositoryP "%RepoPass%" ^
-/ConfigurationRepositoryDumpCfg "%Cfg%" -v "%Version%" ^
-/Out %LOG% -NoTruncate
+FOR /L %%x IN (1, 1, 10) DO (
+
+    CALL :LOG %LOG% "Trying to dump configuration from repository (%%x)"
+        
+    :: batch configurator call
+    %EXE% DESIGNER ^
+    /DisableStartupDialogs ^
+    /DisableStartupMessages ^
+    /IBConnectionString "File=""%ROOT%\db"";" ^
+    /ConfigurationRepositoryF "%RepoPath%" ^
+    /ConfigurationRepositoryN "%RepoUser%" ^
+    /ConfigurationRepositoryP "%RepoPass%" ^
+    /ConfigurationRepositoryDumpCfg "%Cfg%" -v "%Version%" ^
+    /Out %LOG% -NoTruncate && GOTO :SUCCESS 
+)
+
+CALL :LOG %LOG% "Repository operation failed!"
+
+GOTO :CLEANUP
+
+:SUCCESS
 
 CALL :LOG %LOG% "Configuration dumped %Cfg%"
 
