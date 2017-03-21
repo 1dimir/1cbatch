@@ -1,5 +1,8 @@
 @ECHO OFF
 
+:: set up codepage
+@CHCP 65001 > Nul
+
 IF [%1]==[/?] GOTO :Usage
 IF [%1]==[] GOTO :Usage
 IF [%2]==[] GOTO :Usage
@@ -25,9 +28,6 @@ SET LOG=%ROOT%\log.txt
 
 :: log script name
 CALL :LOG %LOG% %0
-
-:: set up codepage
-chcp 65001 >>%LOG%
 
 :: read config
 SET CONFIG=%~d0%~p0config.ini
