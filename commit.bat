@@ -3,8 +3,11 @@
 :: set up codepage
 @CHCP 65001 > Nul
 
-IF [%1]==[/?] GOTO :Usage
+:: Version
 SET Version=%~1
+
+:: Home
+SET Home=%~dp0
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
     SET "ROOT=%TEMP%\%%F"
@@ -17,7 +20,7 @@ IF NOT DEFINED ROOT (
 IF EXIST %ROOT% (
     EXIT /B 200
 ) ELSE (
-    MKDIR %ROOT%\backup
+    MKDIR %ROOT%\db
 )
 
 SET LOG=%ROOT%\log.txt
@@ -25,34 +28,46 @@ SET LOG=%ROOT%\log.txt
 :: log script name
 CALL :LOG %LOG% %0
 
-:: read config
-SET CONFIG=%~d0%~p0config.ini
+IF EXIST %Home%comments\%Version%.author (
+    SET /p Author=<%Home%comments\%Version%.author
+) ELSE (
+    SET Author="Unknown <example@example.org>"
+)
 
-IF NOT EXIST %CONFIG% (
-    CALL :LOG %LOG% "config.ini not found"
+IF NOT EXIST "%Home%git\.git" (
+    CALL :LOG %LOG% "%Home%git\.git not found"
     GOTO :CLEANUP
 )
 
-CALL :LOG %LOG% "config.ini located"
-
-FOR /F "tokens=*" %%A IN ('TYPE "%CONFIG%"') DO SET %%A
-
-IF NOT DEFINED GIT (
-    CALL :LOG %LOG% "GIT is not set in config.ini"
+IF NOT EXIST "%Home%dumps\%Version%" (
+    CALL :LOG %LOG% "%Home%dumps\%Version% not found"
     GOTO :CLEANUP
 )
 
-CALL :LOG %LOG% "Settings read"
 
-:: backup
-ROBOCOPY /move "%GIT%\.git" "%ROOT%\backup\.git"  /E /NFL /NDL /NJH /NJS /nc /ns /np
-ROBOCOPY /move "%GIT%\.gitignore" "%ROOT%\backup\.gitignore"  /E /NFL /NDL /NJH /NJS /nc /ns /np
+MOVE "%Home%git\.git" "%Home%\dumps\%Version%\.git"
 
-:: ROBOCOPY /move "%GIT%\.gitignore" "%ROOT%\backup\\"  /E /NFL /NDL /NJH /NJS /nc /ns /np
+IF EXIST "%Home%git\.gitignore" (
+    MOVE "%Home%git\.gitignore" "%Home%dumps\%Version%\"
+)
 
-:SUCCESS
+CALL :LOG %LOG% "git files moved"
 
-CALL :LOG %LOG% "Success %Cfg%"
+cd %Home%dumps\%Version%\
+
+git add -A >> %LOG%
+
+git commit -F %Home%comments\%Version%.msg --author="%Author%" >> %LOG%
+
+CALL :LOG %LOG% "files added"
+
+MOVE "%Home%\dumps\%Version%\.git" "%Home%git\.git" 
+
+IF EXIST "%Home%dumps\%Version%\.gitignore" (
+    MOVE "%Home%dumps\%Version%\.gitignore" "%Home%git\" 
+)
+
+
 
 :CLEANUP
 
@@ -65,23 +80,11 @@ RMDIR /S /Q %ROOT%
 
 EXIT /B %ERRORLEVEL%
 
-:Usage
-
-ECHO Usage: %~n0 ^<version^> 
-ECHO;
-ECHO Commits parsed files
-ECHO;
-ECHO Parameters be specified in config.ini 
-ECHO Sample:
-ECHO EXE="C:\Program Files (x86)\1cv8\8.3.9.1850\bin\1cv8.exe"
-ECHO RepoPath=tcp://repository_server:port/repo
-ECHO RepoUser=User
-ECHO RepoPass=123123
-
-EXIT /B 1
+EXIT /B %ERRORLEVEL%
 
 :LOG
 
 ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% %~2 >> %1
 
 EXIT /B 0
+
