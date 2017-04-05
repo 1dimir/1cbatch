@@ -100,7 +100,7 @@ CALL :LOG %LOG% "Configuration dumped %Cfg%"
 CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
-TYPE %LOG% >> %TEMP%\%~n0.log
+TYPE %LOG% >> %~dp0%~n0.log
 
 RMDIR /S /Q %ROOT%
 

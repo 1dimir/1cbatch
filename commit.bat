@@ -44,11 +44,10 @@ IF NOT EXIST "%Home%dumps\%Version%" (
     GOTO :CLEANUP
 )
 
-
-MOVE "%Home%git\.git" "%Home%\dumps\%Version%\.git"
+MOVE "%Home%git\.git" "%Home%\dumps\%Version%\.git" >> %LOG%
 
 IF EXIST "%Home%git\.gitignore" (
-    MOVE "%Home%git\.gitignore" "%Home%dumps\%Version%\"
+    MOVE "%Home%git\.gitignore" "%Home%dumps\%Version%\" >> %LOG%
 )
 
 CALL :LOG %LOG% "git files moved"
@@ -61,20 +60,26 @@ git commit -F %Home%comments\%Version%.msg --author="%Author%" >> %LOG%
 
 CALL :LOG %LOG% "files added"
 
-MOVE "%Home%\dumps\%Version%\.git" "%Home%git\.git" 
+MOVE "%Home%\dumps\%Version%\.git" "%Home%git\.git"  >> %LOG%
 
 IF EXIST "%Home%dumps\%Version%\.gitignore" (
-    MOVE "%Home%dumps\%Version%\.gitignore" "%Home%git\" 
+    MOVE "%Home%dumps\%Version%\.gitignore" "%Home%git\" >> %LOG%
 )
 
+CALL :LOG %LOG% "git files moved back to %Home%git"
 
+CD %Home%
+
+RMDIR /S /Q %Home%\dumps\%Version% >> %LOG%
+
+CALL :LOG %LOG% "version dump folder removed"
 
 :CLEANUP
 
 CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
-TYPE %LOG% >> %TEMP%\%~n0.log
+TYPE %LOG% >> %~dp0%~n0.log
 
 RMDIR /S /Q %ROOT%
 
@@ -87,4 +92,3 @@ EXIT /B %ERRORLEVEL%
 ECHO %date:~6%.%date:~3,2%.%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%.%time:~9% %~2 >> %1
 
 EXIT /B 0
-
