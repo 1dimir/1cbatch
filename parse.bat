@@ -5,10 +5,11 @@
 
 IF [%1]==[/?] GOTO :Usage
 IF [%1]==[] GOTO :Usage
-IF [%2]==[] GOTO :Usage
 
-SET Cfg=%1
-SET ExportDir=%~2
+:: Home
+SET Home=%~dp0
+
+SET Version=%~1
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
     SET "ROOT=%TEMP%\%%F"
@@ -48,6 +49,15 @@ IF NOT DEFINED EXE (
 
 CALL :LOG %LOG% "Settings read"
 
+SET CfFile="%Home:"=%\cf\%Version%.cf"
+
+IF NOT EXIST %CfFile% (
+    CALL :LOG %LOG% "%CfFile% not found"
+    GOTO :CLEANUP
+)
+
+SET Exportdir="%Home:"=%\dumps\%Version%"
+
 :: create temporary infobase
 %EXE% DESIGNER ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
@@ -59,7 +69,7 @@ CALL :LOG %LOG% "temporaty infobase %ROOT%\db created"
 :: load cf
 %EXE% DESIGNER ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
-/LoadCfg %Cfg% ^
+/LoadCfg %CfFile% ^
 /Out %LOG% -NoTruncate
 
 CALL :LOG %LOG% "Configuration loaded"
@@ -73,7 +83,7 @@ IF NOT EXIST %Exportdir% (
 :: dump to files
 %EXE% DESIGNER ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
-/DumpConfigToFiles "%ExportDir%" ^
+/DumpConfigToFiles %ExportDir% ^
 /Out %LOG% -NoTruncate
 
 CALL :LOG %LOG% "Configuration parsed to %ExportDir%"
@@ -91,9 +101,9 @@ EXIT /B %ERRORLEVEL%
 
 :Usage
 
-ECHO Usage: %~n0 ^<configuration.cf^> ^<export directory^>
+ECHO Usage: %~n0 ^<version^>
 ECHO;
-ECHO Parses specified configuration file into given directory
+ECHO Parses specified configuration of specified version
 ECHO;
 ECHO Repository access parameters and path to 1c binaries must be specified in config.ini 
 ECHO It must contain EXE variable setting

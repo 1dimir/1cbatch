@@ -4,10 +4,11 @@
 @CHCP 65001 > Nul
 
 IF [%1]==[/?] GOTO :Usage
-IF [%2]==[] GOTO :Usage
+
+:: Home
+SET Home=%~dp0
 
 SET Version=%~1
-SET Cfg=%2
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
     SET "ROOT=%TEMP%\%%F"
@@ -61,6 +62,14 @@ IF NOT DEFINED RepoPass (
 
 CALL :LOG %LOG% "Settings read"
 
+SET CfDir="%Home:"=%cf"
+SET CfFile="%cfdir:"=%\%Version%.cf"
+
+IF NOT EXIST %CfDir% (
+    MKDIR %CfDir%
+    CALL :LOG %LOG% "%CfDir% created"
+)
+
 :: create temporary infobase
 %EXE% DESIGNER ^
 /DisableStartupDialogs ^
@@ -83,7 +92,7 @@ FOR /L %%x IN (1, 1, 10) DO (
     /ConfigurationRepositoryF "%RepoPath%" ^
     /ConfigurationRepositoryN "%RepoUser%" ^
     /ConfigurationRepositoryP "%RepoPass%" ^
-    /ConfigurationRepositoryDumpCfg "%Cfg%" -v "%Version%" ^
+    /ConfigurationRepositoryDumpCfg %CfFile% -v "%Version%" ^
     /Out %LOG% -NoTruncate && GOTO :SUCCESS 
 )
 
@@ -93,7 +102,7 @@ GOTO :CLEANUP
 
 :SUCCESS
 
-CALL :LOG %LOG% "Configuration dumped %Cfg%"
+CALL :LOG %LOG% "Configuration dumped %CfFile%"
 
 :CLEANUP
 
@@ -108,7 +117,7 @@ EXIT /B %ERRORLEVEL%
 
 :Usage
 
-ECHO Usage: %~n0 ^<version^> ^<dump.cf^>
+ECHO Usage: %~n0 ^<version^>
 ECHO;
 ECHO Dumps specified version from 1c configuration repository 
 ECHO;
