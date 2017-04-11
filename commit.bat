@@ -31,14 +31,14 @@ SET LOG=%ROOT%\log.txt
 :: log script name
 CALL :LOG %LOG% %0
 
-IF EXIST %Home%comments\%Version%.author (
-    SET /p Author=<%Home%comments\%Version%.author
+IF EXIST %Home%commits\%Version%.author (
+    SET /p Author=<%Home%commits\%Version%.author
 ) ELSE (
     SET Author="Unknown <example@example.org>"
 )
 
-IF EXIST %Home%comments\%Version%.timestamp (
-    SET /p COMMIT_DATE=<%Home%comments\%Version%.timestamp
+IF EXIST %Home%commits\%Version%.timestamp (
+    SET /p COMMIT_DATE=<%Home%commits\%Version%.timestamp
 )
 
 IF NOT EXIST "%Home%git\.git" (
@@ -64,9 +64,9 @@ cd %Home%dumps\%Version%\
 git add -A >> %LOG%
 
 IF DEFINED COMMIT_DATE (
-    git commit -F %Home%comments\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
+    git commit -F %Home%commits\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
 ) ELSE (
-    git commit -F %Home%comments\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
+    git commit -F %Home%commits\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
 )
 
 CALL :LOG %LOG% "files added"
@@ -106,8 +106,9 @@ ECHO Commits changes.
 ECHO;
 ECHO Repository files are taken from ./git folder
 ECHO Files to be put in index,updated etc expected to be in ./dumps/^<version^> folder
-ECHO Author name expected to be in ./comments/^<version^>.author file
-ECHO Comment expected to be in ./comments/^<version^>.msg file
+ECHO Author name expected to be in ./commits/^<version^>.author file
+ECHO Comment expected to be in ./commits/^<version^>.comment file
+ECHO Date expected to be in ./commits/^<version^>.timestamp file
 
 EXIT /B 1
 
