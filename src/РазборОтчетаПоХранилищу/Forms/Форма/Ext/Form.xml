@@ -157,7 +157,7 @@
 					<v8:content>Разобрать файл отчета</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Action>РазобратьФайлОтчета1</Action>
+			<Action>РазобратьФайлОтчета</Action>
 		</Command>
 	</Commands>
 </Form>
