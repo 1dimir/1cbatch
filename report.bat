@@ -91,12 +91,23 @@ FOR /L %%x IN (1, 1, 10) DO (
 )
 
 CALL :LOG %LOG% "Repository operation failed!"
-
 GOTO :CLEANUP
 
 :SUCCESS
+  CALL :LOG %LOG% "Report saved %ReportFile%"
+  
+IF NOT EXIST %Home%commits (
+    MKDIR %Home%commits
+    CALL :LOG %LOG% "%Home%commits folder created"
+)
 
-CALL :LOG %LOG% "Report saved %ReportFile%"
+%EXE% ENTERPRISE ^
+/IBConnectionString "File=""%ROOT%\db"";" ^
+/EXECUTE %Home%report.epf ^
+/C "report=%Home%report.mxl; home=%Home%commits; log=%LOG%; authors=%Home%AUTHORS; shift=2" ^
+/Out %LOG% -NoTruncate
+
+CALL :LOG %LOG% "Report parsed"
 
 :CLEANUP
 
