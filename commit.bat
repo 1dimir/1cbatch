@@ -51,7 +51,7 @@ IF NOT EXIST "%Home%dumps\%Version%" (
     GOTO :CLEANUP
 )
 
-MOVE "%Home%git\.git" "%Home%\dumps\%Version%\.git" >> %LOG%
+MOVE "%Home%git\.git" "%Home%dumps\%Version%\.git" >> %LOG%
 
 IF EXIST "%Home%git\.gitignore" (
     MOVE "%Home%git\.gitignore" "%Home%dumps\%Version%\" >> %LOG%
@@ -63,15 +63,17 @@ cd %Home%dumps\%Version%\
 
 git add -A >> %LOG%
 
-IF DEFINED COMMIT_DATE (
-    git commit -F %Home%commits\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
-) ELSE (
-    git commit -F %Home%commits\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
-)
-
 CALL :LOG %LOG% "files added"
 
-MOVE "%Home%\dumps\%Version%\.git" "%Home%git\.git"  >> %LOG%
+IF DEFINED COMMIT_DATE (
+    git commit -F %Home%commits\%Version%.comment --author=%Author% --date=%COMMIT_DATE% >> %LOG%
+) ELSE (
+    git commit -F %Home%commits\%Version%.comment --author=%Author% >> %LOG%
+)
+
+CALL :LOG %LOG% "changes committed"
+
+MOVE "%Home%dumps\%Version%\.git" "%Home%git\.git"  >> %LOG%
 
 IF EXIST "%Home%dumps\%Version%\.gitignore" (
     MOVE "%Home%dumps\%Version%\.gitignore" "%Home%git\" >> %LOG%
@@ -81,7 +83,7 @@ CALL :LOG %LOG% "git files moved back to %Home%git"
 
 CD %Home%
 
-RMDIR /S /Q %Home%\dumps\%Version% >> %LOG%
+RMDIR /S /Q %Home%dumps\%Version% >> %LOG%
 
 CALL :LOG %LOG% "version dump folder removed"
 
