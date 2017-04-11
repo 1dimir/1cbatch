@@ -37,6 +37,10 @@ IF EXIST %Home%comments\%Version%.author (
     SET Author="Unknown <example@example.org>"
 )
 
+IF EXIST %Home%comments\%Version%.timestamp (
+    SET /p COMMIT_DATE=<%Home%comments\%Version%.timestamp
+)
+
 IF NOT EXIST "%Home%git\.git" (
     CALL :LOG %LOG% "%Home%git\.git not found"
     GOTO :CLEANUP
@@ -59,7 +63,11 @@ cd %Home%dumps\%Version%\
 
 git add -A >> %LOG%
 
-git commit -F %Home%comments\%Version%.msg --author="%Author%" >> %LOG%
+IF DEFINED COMMIT_DATE (
+    git commit -F %Home%comments\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
+) ELSE (
+    git commit -F %Home%comments\%Version%.comment --author="%Author%" --date=%COMMIT_DATE% >> %LOG%
+)
 
 CALL :LOG %LOG% "files added"
 
