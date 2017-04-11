@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2">
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
+		<ChildItems>
+			<Button name="ФормаРазобратьФайлОтчета" id="19">
+				<Type>CommandBarButton</Type>
+				<CommandName>Form.Command.РазобратьФайлОтчета</CommandName>
+				<ExtendedTooltip name="ФормаРазобратьФайлОтчетаРасширеннаяПодсказка" id="20"/>
+			</Button>
+		</ChildItems>
+	</AutoCommandBar>
+	<Events>
+		<Event name="OnOpen">ПриОткрытии</Event>
+	</Events>
+	<ChildItems>
+		<InputField name="ПутьКФайлуОтчета" id="1">
+			<DataPath>ПутьКФайлуОтчета</DataPath>
+			<ContextMenu name="ПутьКФайлуОтчетаКонтекстноеМеню" id="2"/>
+			<ExtendedTooltip name="ПутьКФайлуОтчетаРасширеннаяПодсказка" id="3"/>
+		</InputField>
+		<InputField name="ПутьКФайлуЖурнала" id="4">
+			<DataPath>ПутьКФайлуЖурнала</DataPath>
+			<ContextMenu name="ПутьКФайлуЖурналаКонтекстноеМеню" id="5"/>
+			<ExtendedTooltip name="ПутьКФайлуЖурналаРасширеннаяПодсказка" id="6"/>
+		</InputField>
+		<InputField name="ПутьКФайлуАвторы" id="13">
+			<DataPath>ПутьКФайлуАвторы</DataPath>
+			<ContextMenu name="ПутьКФайлуАвторыКонтекстноеМеню" id="14"/>
+			<ExtendedTooltip name="ПутьКФайлуАвторыРасширеннаяПодсказка" id="15"/>
+		</InputField>
+		<InputField name="ПутьККаталогу" id="7">
+			<DataPath>ПутьККаталогу</DataPath>
+			<ContextMenu name="ПутьККаталогуКонтекстноеМеню" id="8"/>
+			<ExtendedTooltip name="ПутьККаталогуРасширеннаяПодсказка" id="9"/>
+		</InputField>
+		<InputField name="СмещениеВремени" id="10">
+			<DataPath>СмещениеВремени</DataPath>
+			<ContextMenu name="СмещениеВремениКонтекстноеМеню" id="11"/>
+			<ExtendedTooltip name="СмещениеВремениРасширеннаяПодсказка" id="12"/>
+		</InputField>
+		<InputField name="РазделительПути" id="16">
+			<DataPath>РазделительПути</DataPath>
+			<ContextMenu name="РазделительПутиКонтекстноеМеню" id="17"/>
+			<ExtendedTooltip name="РазделительПутиРасширеннаяПодсказка" id="18"/>
+		</InputField>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="1">
+			<Type>
+				<v8:Type>cfg:ExternalDataProcessorObject.РазборОтчетаПоХранилищу</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+		</Attribute>
+		<Attribute name="РазделительПути" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Разделитель пути</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>1</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ПутьКФайлуОтчета" id="3">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Путь к файлу отчета</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ПутьККаталогу" id="4">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Путь к файлу отчета на клиенте</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="СмещениеВремени" id="5">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Смещение времени</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>2</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Any</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ПутьКФайлуЖурнала" id="6">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Путь к файлу журнала</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ПутьКФайлуАвторы" id="7">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Путь к файлу AUTHORS</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+	</Attributes>
+	<Commands>
+		<Command name="РазобратьФайлОтчета" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Разобрать файл отчета</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Разобрать файл отчета</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>РазобратьФайлОтчета1</Action>
+		</Command>
+	</Commands>
+</Form>
