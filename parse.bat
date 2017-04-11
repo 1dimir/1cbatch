@@ -50,14 +50,14 @@ IF NOT DEFINED EXE (
 
 CALL :LOG %LOG% "Settings read"
 
-SET CfFile="%Home:"=%\cf\%Version%.cf"
+SET CfFile="%Home:"=%cf\%Version%.cf"
 
 IF NOT EXIST %CfFile% (
     CALL :LOG %LOG% "%CfFile% not found"
     GOTO :CLEANUP
 )
 
-SET Exportdir="%Home:"=%\dumps\%Version%"
+SET Exportdir="%Home:"=%dumps\%Version%"
 
 :: create temporary infobase
 %EXE% DESIGNER ^
