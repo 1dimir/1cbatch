@@ -3,6 +3,9 @@
 :: set up codepage
 @CHCP 65001 > Nul
 
+IF [%1]==[/?] GOTO :Usage
+IF [%1]==[-h] GOTO :Usage
+
 :: Version
 SET Version=%~1
 
@@ -86,6 +89,19 @@ RMDIR /S /Q %ROOT%
 EXIT /B %ERRORLEVEL%
 
 EXIT /B %ERRORLEVEL%
+
+:Usage
+
+ECHO Usage: %~nx0 ^<version^>
+ECHO;
+ECHO Commits changes. 
+ECHO;
+ECHO Repository files are taken from ./git folder
+ECHO Files to be put in index,updated etc expected to be in ./dumps/^<version^> folder
+ECHO Author name expected to be in ./comments/^<version^>.author file
+ECHO Comment expected to be in ./comments/^<version^>.msg file
+
+EXIT /B 1
 
 :LOG
 

@@ -4,6 +4,7 @@
 @CHCP 65001 > Nul
 
 IF [%1]==[/?] GOTO :Usage
+IF [%1]==[-h] GOTO :Usage
 IF [%1]==[] GOTO :Usage
 
 :: Home
@@ -101,7 +102,7 @@ EXIT /B %ERRORLEVEL%
 
 :Usage
 
-ECHO Usage: %~n0 ^<version^>
+ECHO Usage: %~nx0 ^<version^>
 ECHO;
 ECHO Parses specified configuration of specified version
 ECHO;

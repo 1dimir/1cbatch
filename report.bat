@@ -4,6 +4,7 @@
 @CHCP 65001 > Nul
 
 IF [%1]==[/?] GOTO :Usage
+IF [%1]==[-h] GOTO :Usage
 
 :: Home
 SET Home=%~dp0
@@ -110,7 +111,7 @@ EXIT /B %ERRORLEVEL%
 
 :Usage
 
-ECHO Usage: %~n0
+ECHO Usage: %~nx0
 ECHO;
 ECHO Retrieves report from 1c configuration repository 
 ECHO;
