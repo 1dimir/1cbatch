@@ -62,7 +62,6 @@ IF NOT DEFINED RepoPass (
 CALL :LOG %LOG% "Settings read"
 
 SET ReportFile="%Home:"=%report.mxl"
-echo %ReportFile%
 
 :: create temporary infobase
 %EXE% DESIGNER ^
