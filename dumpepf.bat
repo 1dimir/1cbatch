@@ -54,18 +54,21 @@ IF NOT EXIST %SRC% (
 /DisableStartupMessages ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
 /RestoreIB ^
-/Out %LOG% -NoTruncate ^
-&& CALL :LOG %LOG% "temporaty infobase %ROOT:"=%\db created" ^
-|| GOTO :CLEANUP
+/Out %LOG% -NoTruncate 
+
+IF EXIST "%ROOT:"=%\db\1Cv8.1CD" (
+    CALL :LOG %LOG% "temporaty infobase %ROOT:"=%\db created"
+) ELSE (
+    CALL :LOG %LOG% "failed to create db %ROOT:"=%\db"
+    GOTO :CLEANUP
+)
 
 %EXE% DESIGNER ^
 /DisableStartupDialogs ^
 /DisableStartupMessages ^
 /IBConnectionString "File=""%ROOT%\db"";" ^
 /DumpExternalDataProcessorOrReportToFiles %SRC% %EPF% -Format Hierarchical ^
-/Out %LOG% -NoTruncate ^
-&& CALL :LOG %LOG% "File %EPF:"='% successfully parsed to %SRC:"='%" ^
-|| GOTO :CLEANUP
+/Out %LOG% -NoTruncate && CALL :LOG %LOG% "File %EPF:"='% successfully parsed to %SRC:"='%"
 
 :CLEANUP
 
