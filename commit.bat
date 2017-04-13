@@ -39,6 +39,7 @@ IF EXIST %Home%commits\%Version%.author (
 
 IF EXIST %Home%commits\%Version%.timestamp (
     SET /p COMMIT_DATE=<%Home%commits\%Version%.timestamp
+    SET /p GIT_COMMITTER_DATE=<%Home%commits\%Version%.timestamp
 )
 
 IF NOT EXIST "%Home%git\.git" (
