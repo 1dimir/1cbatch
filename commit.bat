@@ -29,7 +29,7 @@ IF EXIST %ROOT% (
 SET LOG=%ROOT%\log.txt
 
 :: log script name
-CALL :LOG %LOG% %0
+CALL :LOG %LOG% "%~0 %*"
 
 IF EXIST %Home%commits\%Version%.author (
     SET /p Author=<%Home%commits\%Version%.author

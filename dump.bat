@@ -28,7 +28,7 @@ IF EXIST %ROOT% (
 SET LOG=%ROOT%\log.txt
 
 :: log script name
-CALL :LOG %LOG% %0
+CALL :LOG %LOG% "%~0 %*"
 
 :: read config
 SET CONFIG=%~d0%~p0config.ini
