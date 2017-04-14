@@ -12,21 +12,14 @@ SET Version=%~1
 :: Home
 SET Home=%~dp0
 
+:: Initialize temporary folder name in %TEMP% with GUID
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
-    SET "ROOT=%TEMP%\%%F"
+    SET ROOT="%TEMP:"=%\%%F"
 )
 
-IF NOT DEFINED ROOT (
-    EXIT /B 100
-)
+MKDIR %ROOT% > Nul || ECHO Failed to create temporary folder && EXIT /B 1
 
-IF EXIST %ROOT% (
-    EXIT /B 200
-) ELSE (
-    MKDIR %ROOT%\db
-)
-
-SET LOG=%ROOT%\log.txt
+SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
@@ -84,8 +77,6 @@ CALL :LOG %LOG% "git files moved back to %Home%git"
 
 CD %Home%
 
-RMDIR /S /Q %Home%dumps\%Version% >> %LOG%
-
 CALL :LOG %LOG% "version dump folder removed"
 
 :CLEANUP
@@ -93,11 +84,9 @@ CALL :LOG %LOG% "version dump folder removed"
 CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
-TYPE %LOG% >> %~dp0%~n0.log
+TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT%
-
-EXIT /B %ERRORLEVEL%
 
 EXIT /B %ERRORLEVEL%
 

@@ -11,21 +11,17 @@ SET Home=%~dp0
 
 SET Version=%~1
 
+:: Initialize temporary folder name in %TEMP% with GUID
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
-    SET "ROOT=%TEMP%\%%F"
+    SET ROOT="%TEMP:"=%\%%F"
 )
 
-IF NOT DEFINED ROOT (
-    EXIT /B 100
+MKDIR "%ROOT:"=%\db" > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
 )
 
-IF EXIST %ROOT% (
-    EXIT /B 200
-) ELSE (
-    MKDIR %ROOT%\db
-)
-
-SET LOG=%ROOT%\log.txt
+SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
@@ -75,11 +71,11 @@ IF NOT EXIST %CfDir% (
 %EXE% DESIGNER ^
 /DisableStartupDialogs ^
 /DisableStartupMessages ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /RestoreIB ^
 /Out %LOG% -NoTruncate
 
-CALL :LOG %LOG% "temporaty infobase %ROOT%\db created"
+CALL :LOG %LOG% "temporaty infobase %ROOT:"=%\db created"
 
 FOR /L %%x IN (1, 1, 10) DO (
 
@@ -89,7 +85,7 @@ FOR /L %%x IN (1, 1, 10) DO (
     %EXE% DESIGNER ^
     /DisableStartupDialogs ^
     /DisableStartupMessages ^
-    /IBConnectionString "File=""%ROOT%\db"";" ^
+    /IBConnectionString "File=""%ROOT:"=%\db"";" ^
     /ConfigurationRepositoryF "%RepoPath%" ^
     /ConfigurationRepositoryN "%RepoUser%" ^
     /ConfigurationRepositoryP "%RepoPass%" ^

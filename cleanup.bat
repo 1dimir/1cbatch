@@ -18,39 +18,57 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Tri
     SET ROOT="%TEMP:"=%\%%F"
 )
 
-MKDIR %ROOT% > Nul || ECHO Failed to create temporary folder && EXIT /B 1
+MKDIR %ROOT% > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
+)
 
 SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
 
-IF EXIST "%Home:"=%cf\%Version%" (
-    RMDIR /S /Q "%Home:"=%cf\%Version%" >> %LOG% 2>&1 && CALL :LOG %LOG% "%Home:"=%cf\%Version% deleted"
+IF EXIST "%Home:"=%cf\%Version%.cf" (
+    DEL /F /Q /S "%Home:"=%cf\%Version%.cf" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%cf\%Version%.cf deleted"
 )
 
 IF EXIST "%Home:"=%commits\%Version%.author" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.author" >> %LOG% 2>&1 && CALL :LOG %LOG% "%Home:"=%commits\%Version%.author deleted"
+    DEL /F /Q /S "%Home:"=%commits\%Version%.author" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.author deleted"
 )
 
 IF EXIST "%Home:"=%commits\%Version%.comment" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.comment" >> %LOG% 2>&1 && CALL :LOG %LOG% "%Home:"=%commits\%Version%.comment deleted"
+    DEL /F /Q /S "%Home:"=%commits\%Version%.comment" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.comment deleted"
 )
 
 IF EXIST "%Home:"=%commits\%Version%.timestamp" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.timestamp" >> %LOG% 2>&1 && CALL :LOG %LOG% "%Home:"=%commits\%Version%.timestamp deleted"
+    DEL /F /Q /S "%Home:"=%commits\%Version%.timestamp" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.timestamp deleted"
 )
 
 IF EXIST "%Home:"=%dumps\%Version%\.git" IF NOT EXIST "%Home":=%git\.git" (
-    MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git"  >> %LOG% 2>&1 && CALL :LOG %LOG% ".git folder moved back" || CALL :LOG %LOG% ".git folder is still present in %Home:"=%dumps\%Version%\ and failed to be moved" && GOTO :CLEANUP
+    MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% ".git folder moved back" ^
+        || (
+            CALL :LOG %LOG% ".git folder is still present in %Home:"=%dumps\%Version%\ and failed to be moved"
+            GOTO :CLEANUP
+        )
 )
 
 IF EXIST "%Home:"=%dumps\%Version%\.gitignore" IF NOT EXIST "%Home:"=%git\.gitignore" (
-    MOVE "%Home:"=%dumps\%Version%\.gitignore" "%Home:"=%git\.gitignore"  >> %LOG% 2>&1 && CALL :LOG %LOG% ".gitignore file moved back" || CALL :LOG %LOG% ".gitignore file is still present in %Home:"=%dumps\%Version%\ and failed to be moved" && GOTO :CLEANUP
+    MOVE "%Home:"=%dumps\%Version%\.gitignore" "%Home:"=%git\.gitignore" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% ".gitignore file moved back" ^
+        || (
+            CALL :LOG %LOG% ".gitignore file is still present in %Home:"=%dumps\%Version%\ and failed to be moved"
+            GOTO :CLEANUP
+        )
 )
 
 IF EXIST "%Home"=%dumps\%Version%" (
-    RMDIR /S /Q "%Home:"=%dumps\%Version%" >> %LOG% 2>&1 && CALL :LOG %LOG% "%Home:"=%dumps\%Version% deleted"
+    RMDIR /S /Q "%Home:"=%dumps\%Version%" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%dumps\%Version% deleted"
 )
 
 :CLEANUP

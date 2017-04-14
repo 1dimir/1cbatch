@@ -12,21 +12,17 @@ SET Home=%~dp0
 
 SET Version=%~1
 
+:: Initialize temporary folder name in %TEMP% with GUID
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
-    SET "ROOT=%TEMP%\%%F"
+    SET ROOT="%TEMP:"=%\%%F"
 )
 
-IF NOT DEFINED ROOT (
-    EXIT /B 100
+MKDIR "%ROOT:"=%\db" > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
 )
 
-IF EXIST %ROOT% (
-    EXIT /B 200
-) ELSE (
-    MKDIR %ROOT%\db
-)
-
-SET LOG=%ROOT%\log.txt
+SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
@@ -61,15 +57,15 @@ SET Exportdir="%Home:"=%dumps\%Version%"
 
 :: create temporary infobase
 %EXE% DESIGNER ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /RestoreIB ^
 /Out %LOG% -NoTruncate
 
-CALL :LOG %LOG% "temporaty infobase %ROOT%\db created"
+CALL :LOG %LOG% "temporaty infobase %ROOT:"=%\db created"
 
 :: load cf
 %EXE% DESIGNER ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /LoadCfg %CfFile% ^
 /Out %LOG% -NoTruncate
 
@@ -77,13 +73,13 @@ CALL :LOG %LOG% "Configuration loaded"
 
 :: create export dir if not exist
 IF NOT EXIST %Exportdir% (
-    MKDIR %ExportDir%
-    CALL :LOG %LOG% "%ExportDir% created"
+    MKDIR %ExportDir% >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%ExportDir% created"
 )
 
 :: dump to files
 %EXE% DESIGNER ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /DumpConfigToFiles %ExportDir% ^
 /Out %LOG% -NoTruncate
 
@@ -94,7 +90,7 @@ CALL :LOG %LOG% "Configuration parsed to %ExportDir%"
 CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
-TYPE %LOG% >> %~dp0%~n0.log
+TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT%
 
