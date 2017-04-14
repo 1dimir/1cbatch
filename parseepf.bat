@@ -10,14 +10,14 @@ IF [%1]==[-h] GOTO :Usage
 SET EPF="%~dpnx1"
 SET SRC="%~dp1src"
 
-:: initialize temporary folder name in %TEMP% with GUID
+:: Initialize temporary folder name in %TEMP% with GUID
 FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Trim()"`) DO (
-    SET "ROOT=%TEMP%\%%F"
+    SET ROOT="%TEMP:"=%\%%F"
 )
 
-MKDIR %ROOT%\db
+MKDIR "%ROOT:"=%\db" > Nul || ECHO Failed to create temporary folder && EXIT /B 1
 
-SET LOG=%ROOT%\log.txt
+SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
@@ -52,7 +52,7 @@ IF NOT EXIST %SRC% (
 %EXE% DESIGNER ^
 /DisableStartupDialogs ^
 /DisableStartupMessages ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /RestoreIB ^
 /Out %LOG% -NoTruncate 
 
@@ -66,7 +66,7 @@ IF EXIST "%ROOT:"=%\db\1Cv8.1CD" (
 %EXE% DESIGNER ^
 /DisableStartupDialogs ^
 /DisableStartupMessages ^
-/IBConnectionString "File=""%ROOT%\db"";" ^
+/IBConnectionString "File=""%ROOT:"=%\db"";" ^
 /DumpExternalDataProcessorOrReportToFiles %SRC% %EPF% -Format Hierarchical ^
 /Out %LOG% -NoTruncate && CALL :LOG %LOG% "File %EPF:"='% successfully parsed to %SRC:"='%"
 
@@ -85,7 +85,7 @@ EXIT /B 0
 
 ECHO Usage: %~nx0 ^<external_data_processor.epf^>
 ECHO;
-ECHO Dumps specified external data procesor or report to files into src directory
+ECHO Parses specified external data procesor or report to files into src directory
 ECHO;
 ECHO Path to 1c binaries must be specified in config.ini 
 ECHO Sample:
