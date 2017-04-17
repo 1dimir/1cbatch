@@ -43,6 +43,11 @@
 			<ContextMenu name="РазделительПутиКонтекстноеМеню" id="17"/>
 			<ExtendedTooltip name="РазделительПутиРасширеннаяПодсказка" id="18"/>
 		</InputField>
+		<InputField name="НомерВерсии" id="21">
+			<DataPath>НомерВерсии</DataPath>
+			<ContextMenu name="НомерВерсииКонтекстноеМеню" id="22"/>
+			<ExtendedTooltip name="НомерВерсииРасширеннаяПодсказка" id="23"/>
+		</InputField>
 	</ChildItems>
 	<Attributes>
 		<Attribute name="Объект" id="1">
@@ -140,6 +145,22 @@
 					<v8:Length>0</v8:Length>
 					<v8:AllowedLength>Variable</v8:AllowedLength>
 				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="НомерВерсии" id="8">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Номер версии</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
 			</Type>
 		</Attribute>
 	</Attributes>
