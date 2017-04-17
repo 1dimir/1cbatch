@@ -1,5 +1,7 @@
 @ECHO OFF
 
+Setlocal EnableDelayedExpansion
+
 :: set up codepage
 @CHCP 65001 > Nul
 
@@ -66,20 +68,41 @@ SET ReportFile="%Home:"=%report.mxl"
 
 CALL :LOG %LOG% "temporaty infobase %ROOT:"=%\db created"
 
+IF EXIST "%Home:"=%version" (
+    SET /P Version=<version
+    SET /A Version=!Version: =! + 1
+)
+
 FOR /L %%x IN (1, 1, 10) DO (
 
     CALL :LOG %LOG% "Trying to get report from repository (%%x)"
         
-    :: batch configurator call
-    %EXE% DESIGNER ^
-    /DisableStartupDialogs ^
-    /DisableStartupMessages ^
-    /IBConnectionString "File=""%ROOT:"=%\db"";" ^
-    /ConfigurationRepositoryF "%RepoPath%" ^
-    /ConfigurationRepositoryN "%RepoUser%" ^
-    /ConfigurationRepositoryP "%RepoPass%" ^
-    /ConfigurationRepositoryReport %ReportFile% ^
-    /Out %LOG% -NoTruncate && GOTO :SUCCESS 
+    IF DEFINED Version (
+        :: batch configurator call
+        %EXE% DESIGNER ^
+        /DisableStartupDialogs ^
+        /DisableStartupMessages ^
+        /IBConnectionString "File=""%ROOT:"=%\db"";" ^
+        /ConfigurationRepositoryF "%RepoPath%" ^
+        /ConfigurationRepositoryN "%RepoUser%" ^
+        /ConfigurationRepositoryP "%RepoPass%" ^
+        /ConfigurationRepositoryReport %ReportFile% -NBegin !Version! ^
+        /Out %LOG% -NoTruncate ^
+            && GOTO :SUCCESS 
+
+    ) ELSE (
+        :: batch configurator call
+        %EXE% DESIGNER ^
+        /DisableStartupDialogs ^
+        /DisableStartupMessages ^
+        /IBConnectionString "File=""%ROOT:"=%\db"";" ^
+        /ConfigurationRepositoryF "%RepoPath%" ^
+        /ConfigurationRepositoryN "%RepoUser%" ^
+        /ConfigurationRepositoryP "%RepoPass%" ^
+        /ConfigurationRepositoryReport %ReportFile% ^
+        /Out %LOG% -NoTruncate ^
+            && GOTO :SUCCESS 
+    )
 )
 
 CALL :LOG %LOG% "Repository operation failed!"
@@ -93,11 +116,21 @@ IF NOT EXIST %Home%commits (
     CALL :LOG %LOG% "%Home%commits folder created"
 )
 
-%EXE% ENTERPRISE ^
-/IBConnectionString "File=""%ROOT:"=%\db"";" ^
-/EXECUTE %Home%report.epf ^
-/C "report=%Home%report.mxl; home=%Home%commits; log=%LOG:"=%; authors=%Home%AUTHORS; shift=3" ^
-/Out %LOG% -NoTruncate
+IF DEFINED Version (
+    :: start processor in enterprise mode
+    %EXE% ENTERPRISE ^
+    /IBConnectionString "File=""%ROOT:"=%\db"";" ^
+    /EXECUTE %Home%report.epf ^
+    /C "report=%Home%report.mxl; home=%Home%commits; log=%LOG:"=%; authors=%Home%AUTHORS; version=!Version!; shift=3" ^
+    /Out %LOG% -NoTruncate
+
+) ELSE (
+    %EXE% ENTERPRISE ^
+    /IBConnectionString "File=""%ROOT:"=%\db"";" ^
+    /EXECUTE %Home%report.epf ^
+    /C "report=%Home%report.mxl; home=%Home%commits; log=%LOG:"=%; authors=%Home%AUTHORS; shift=3" ^
+    /Out %LOG% -NoTruncate
+)
 
 CALL :LOG %LOG% "Report parsed"
 
@@ -108,7 +141,7 @@ CALL :LOG %LOG% "cleanup started"
 TYPE %LOG% 
 TYPE %LOG% >> "%~dp0%~n0.log"
 
-RMDIR /S /Q %ROOT%
+RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
 EXIT /B %ERRORLEVEL%
 

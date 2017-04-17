@@ -108,7 +108,7 @@ CALL :LOG %LOG% "cleanup started"
 TYPE %LOG% 
 TYPE %LOG% >> %~dp0%~n0.log
 
-RMDIR /S /Q %ROOT%
+RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
 EXIT /B %ERRORLEVEL%
 

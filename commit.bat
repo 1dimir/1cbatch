@@ -60,12 +60,15 @@ git add -A >> %LOG%
 CALL :LOG %LOG% "files added"
 
 IF DEFINED COMMIT_DATE (
-    git commit -F %Home%commits\%Version%.comment --author=%Author% --date=%COMMIT_DATE% >> %LOG%
+    git commit -F %Home%commits\%Version%.comment --author=%Author% --date=%COMMIT_DATE% >> %LOG% ^
+        && CALL :LOG %LOG% "changes committed"
 ) ELSE (
-    git commit -F %Home%commits\%Version%.comment --author=%Author% >> %LOG%
+    git commit -F %Home%commits\%Version%.comment --author=%Author% >> %LOG% ^
+        && CALL :LOG %LOG% "changes committed"
 )
 
-CALL :LOG %LOG% "changes committed"
+ECHO %Version: =%  > "%Home:"=%version" ^
+    && CALL :LOG %LOG% "version file updated"
 
 MOVE "%Home%dumps\%Version%\.git" "%Home%git\.git"  >> %LOG%
 
@@ -77,8 +80,6 @@ CALL :LOG %LOG% "git files moved back to %Home%git"
 
 CD %Home%
 
-CALL :LOG %LOG% "version dump folder removed"
-
 :CLEANUP
 
 CALL :LOG %LOG% "cleanup started"
@@ -86,9 +87,9 @@ CALL :LOG %LOG% "cleanup started"
 TYPE %LOG% 
 TYPE %LOG% >> "%~dp0%~n0.log"
 
-RMDIR /S /Q %ROOT%
+RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
-EXIT /B %ERRORLEVEL%
+EXIT /B 0
 
 :Usage
 
