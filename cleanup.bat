@@ -33,19 +33,9 @@ IF EXIST "%Home:"=%cf\%Version%.cf" (
         && CALL :LOG %LOG% "%Home:"=%cf\%Version%.cf deleted"
 )
 
-IF EXIST "%Home:"=%commits\%Version%.author" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.author" >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.author deleted"
-)
-
-IF EXIST "%Home:"=%commits\%Version%.comment" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.comment" >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.comment deleted"
-)
-
-IF EXIST "%Home:"=%commits\%Version%.timestamp" (
-    DEL /F /Q /S "%Home:"=%commits\%Version%.timestamp" >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "%Home:"=%commits\%Version%.timestamp deleted"
+IF EXIST "%Home:"=%commits\%Version%" (
+    RMDIR /S /Q  "%Home:"=%commits\%Version%" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%commits\%Version% deleted"
 )
 
 IF EXIST "%Home:"=%dumps\%Version%\.git" IF NOT EXIST "%Home":=%git\.git" (

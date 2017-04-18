@@ -24,15 +24,15 @@ SET LOG="%ROOT:"=%\log.txt"
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
 
-IF EXIST %Home%commits\%Version%.author (
-    SET /p Author=<%Home%commits\%Version%.author
+IF EXIST %Home%commits\%Version%\author (
+    SET /p Author=<%Home%commits\%Version%\author
 ) ELSE (
     SET Author="Unknown <example@example.org>"
 )
 
-IF EXIST %Home%commits\%Version%.timestamp (
-    SET /p COMMIT_DATE=<%Home%commits\%Version%.timestamp
-    SET /p GIT_COMMITTER_DATE=<%Home%commits\%Version%.timestamp
+IF EXIST %Home%commits\%Version%\timestamp (
+    SET /p COMMIT_DATE=<%Home%commits\%Version%\timestamp
+    SET /p GIT_COMMITTER_DATE=<%Home%commits\%Version%\timestamp
 )
 
 IF NOT EXIST "%Home%git\.git" (
@@ -60,10 +60,10 @@ git add -A >> %LOG%
 CALL :LOG %LOG% "files added"
 
 IF DEFINED COMMIT_DATE (
-    git commit -F %Home%commits\%Version%.comment --author=%Author% --date=%COMMIT_DATE% >> %LOG% ^
+    git commit -F %Home%commits\%Version%\comment --author=%Author% --date=%COMMIT_DATE% >> %LOG% ^
         && CALL :LOG %LOG% "changes committed"
 ) ELSE (
-    git commit -F %Home%commits\%Version%.comment --author=%Author% >> %LOG% ^
+    git commit -F %Home%commits\%Version%\comment --author=%Author% >> %LOG% ^
         && CALL :LOG %LOG% "changes committed"
 )
 
