@@ -15,7 +15,10 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Tri
     SET ROOT="%TEMP:"=%\%%F"
 )
 
-MKDIR "%ROOT:"=%\db" > Nul || ECHO Failed to create temporary folder && EXIT /B 1
+MKDIR "%ROOT:"=%\db" > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
+)
 
 SET LOG="%ROOT:"=%\log.txt"
 

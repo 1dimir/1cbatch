@@ -17,66 +17,69 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Tri
     SET ROOT="%TEMP:"=%\%%F"
 )
 
-MKDIR %ROOT% > Nul || ECHO Failed to create temporary folder && EXIT /B 1
+MKDIR %ROOT% > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
+)
 
 SET LOG="%ROOT:"=%\log.txt"
 
 :: log script name
 CALL :LOG %LOG% "%~0 %*"
 
-IF EXIST %Home%commits\%Version%\author (
-    SET /p Author=<%Home%commits\%Version%\author
+IF EXIST "%Home:"=%commits\%Version%\author" (
+    SET /p Author=<"%Home:"=%commits\%Version%\author"
 ) ELSE (
     SET Author="Unknown <example@example.org>"
 )
 
-IF EXIST %Home%commits\%Version%\timestamp (
-    SET /p COMMIT_DATE=<%Home%commits\%Version%\timestamp
-    SET /p GIT_COMMITTER_DATE=<%Home%commits\%Version%\timestamp
+IF EXIST "%Home:"=%commits\%Version%\timestamp" (
+    SET /p COMMIT_DATE=<"%Home:"=%commits\%Version%\timestamp"
+    SET /p GIT_COMMITTER_DATE=<"%Home:"=%commits\%Version%\timestamp"
 )
 
-IF NOT EXIST "%Home%git\.git" (
-    CALL :LOG %LOG% "%Home%git\.git not found"
+IF NOT EXIST "%Home:"=%git\.git" (
+    CALL :LOG %LOG% "%Home:"=%git\.git not found"
     GOTO :CLEANUP
 )
 
-IF NOT EXIST "%Home%dumps\%Version%" (
-    CALL :LOG %LOG% "%Home%dumps\%Version% not found"
+IF NOT EXIST "%Home:"=%dumps\%Version%" (
+    CALL :LOG %LOG% "%Home:"=%dumps\%Version% not found"
     GOTO :CLEANUP
 )
 
-MOVE "%Home%git\.git" "%Home%dumps\%Version%\.git" >> %LOG%
+MOVE "%Home:"=%git\.git" "%Home:"=%dumps\%Version%\.git" >> %LOG%
 
-IF EXIST "%Home%git\.gitignore" (
-    MOVE "%Home%git\.gitignore" "%Home%dumps\%Version%\" >> %LOG%
+IF EXIST "%Home:"=%git\.gitignore" (
+    MOVE "%Home:"=%git\.gitignore" "%Home:"=%dumps\%Version%\" >> %LOG%
 )
 
 CALL :LOG %LOG% "git files moved"
 
-cd %Home%dumps\%Version%\
+cd "%Home:"=%dumps\%Version%\"
 
 git add -A >> %LOG%
 
 CALL :LOG %LOG% "files added"
 
 IF DEFINED COMMIT_DATE (
-    git commit -F %Home%commits\%Version%\comment --author=%Author% --date=%COMMIT_DATE% >> %LOG% ^
+    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" --date=%COMMIT_DATE% >> %LOG% ^
         && CALL :LOG %LOG% "changes committed"
 ) ELSE (
-    git commit -F %Home%commits\%Version%\comment --author=%Author% >> %LOG% ^
+    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" >> %LOG% ^
         && CALL :LOG %LOG% "changes committed"
 )
 
 ECHO %Version: =%  > "%Home:"=%version" ^
     && CALL :LOG %LOG% "version file updated"
 
-MOVE "%Home%dumps\%Version%\.git" "%Home%git\.git"  >> %LOG%
+MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git"  >> %LOG%
 
-IF EXIST "%Home%dumps\%Version%\.gitignore" (
-    MOVE "%Home%dumps\%Version%\.gitignore" "%Home%git\" >> %LOG%
+IF EXIST "%Home:"=%dumps\%Version%\.gitignore" (
+    MOVE "%Home:"=%dumps\%Version%\.gitignore" "%Home:"=%git\" >> %LOG%
 )
 
-CALL :LOG %LOG% "git files moved back to %Home%git"
+CALL :LOG %LOG% "git files moved back to %Home:"=%git"
 
 CD %Home%
 

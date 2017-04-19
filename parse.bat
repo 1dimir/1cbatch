@@ -30,7 +30,7 @@ CALL :LOG %LOG% "%~0 %*"
 :: read config
 SET CONFIG=%~d0%~p0config.ini
 
-IF NOT EXIST %CONFIG% (
+IF NOT EXIST "%CONFIG%" (
     CALL :LOG %LOG% "config.ini not found"
     GOTO :CLEANUP
 )
@@ -49,7 +49,7 @@ CALL :LOG %LOG% "Settings read"
 SET CfFile="%Home:"=%cf\%Version%.cf"
 
 IF NOT EXIST %CfFile% (
-    CALL :LOG %LOG% "%CfFile% not found"
+    CALL :LOG %LOG% "%CfFile:"=% not found"
     GOTO :CLEANUP
 )
 
@@ -74,7 +74,7 @@ CALL :LOG %LOG% "Configuration loaded"
 :: create export dir if not exist
 IF NOT EXIST %Exportdir% (
     MKDIR %ExportDir% >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "%ExportDir% created"
+        && CALL :LOG %LOG% "%ExportDir:"=% created"
 )
 
 :: dump to files
@@ -83,7 +83,7 @@ IF NOT EXIST %Exportdir% (
 /DumpConfigToFiles %ExportDir% ^
 /Out %LOG% -NoTruncate
 
-CALL :LOG %LOG% "Configuration parsed to %ExportDir%"
+CALL :LOG %LOG% "Configuration parsed to %ExportDir:"=%"
 
 :CLEANUP
 

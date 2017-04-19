@@ -29,7 +29,7 @@ CALL :LOG %LOG% "%~0 %*"
 :: read config
 SET CONFIG=%~d0%~p0config.ini
 
-IF NOT EXIST %CONFIG% (
+IF NOT EXIST "%CONFIG%" (
     CALL :LOG %LOG% "config.ini not found"
     GOTO :CLEANUP
 )
@@ -64,7 +64,7 @@ SET CfFile="%cfdir:"=%\%Version%.cf"
 
 IF NOT EXIST %CfDir% (
     MKDIR %CfDir%
-    CALL :LOG %LOG% "%CfDir% created"
+    CALL :LOG %LOG% "%CfDir:"=% created"
 )
 
 :: create temporary infobase
@@ -90,27 +90,31 @@ FOR /L %%x IN (1, 1, 10) DO (
     /ConfigurationRepositoryN "%RepoUser%" ^
     /ConfigurationRepositoryP "%RepoPass%" ^
     /ConfigurationRepositoryDumpCfg %CfFile% -v "%Version%" ^
-    /Out %LOG% -NoTruncate && GOTO :SUCCESS 
+    /Out %LOG% -NoTruncate ^
+        && GOTO :SUCCESS 
 )
 
 CALL :LOG %LOG% "Repository operation failed!"
-
+SET FAILED
 GOTO :CLEANUP
 
 :SUCCESS
 
-CALL :LOG %LOG% "Configuration dumped %CfFile%"
+CALL :LOG %LOG% "Configuration dumped %CfFile:"=%"
 
 :CLEANUP
 
 CALL :LOG %LOG% "cleanup started"
 
 TYPE %LOG% 
-TYPE %LOG% >> %~dp0%~n0.log
+TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
-EXIT /B %ERRORLEVEL%
+IF DEFINED FAILED ^
+    EXIT /B 1
+
+EXIT /B 0
 
 :Usage
 

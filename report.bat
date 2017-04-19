@@ -16,7 +16,10 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`powershell "[guid]::NewGuid().ToString().Tri
     SET ROOT="%TEMP:"=%\%%F"
 )
 
-MKDIR "%ROOT:"=%\db" > Nul || ECHO Failed to create temporary folder && EXIT /B 1
+MKDIR "%ROOT:"=%\db" > Nul || (
+    ECHO Failed to create temporary folder
+    EXIT /B 1
+)
 
 SET LOG="%ROOT:"=%\log.txt"
 
@@ -26,7 +29,7 @@ CALL :LOG %LOG% "%~0 %*"
 :: read config
 SET CONFIG=%~d0%~p0config.ini
 
-IF NOT EXIST %CONFIG% (
+IF NOT EXIST "%CONFIG%" (
     CALL :LOG %LOG% "config.ini not found"
     GOTO :CLEANUP
 )
@@ -106,29 +109,30 @@ FOR /L %%x IN (1, 1, 10) DO (
 )
 
 CALL :LOG %LOG% "Repository operation failed!"
+SET FAILED
 GOTO :CLEANUP
 
 :SUCCESS
-  CALL :LOG %LOG% "Report saved %ReportFile%"
+CALL :LOG %LOG% "Report saved %ReportFile:"=%"
   
-IF NOT EXIST %Home%commits (
-    MKDIR %Home%commits
-    CALL :LOG %LOG% "%Home%commits folder created"
+IF NOT EXIST "%Home:"=%commits" (
+    MKDIR "%Home:"=%commits"
+    CALL :LOG %LOG% "%Home:"=%commits folder created"
 )
 
 IF DEFINED Version (
     :: start processor in enterprise mode
     %EXE% ENTERPRISE ^
     /IBConnectionString "File=""%ROOT:"=%\db"";" ^
-    /EXECUTE %Home%report.epf ^
-    /C "report=%Home%report.mxl; home=%Home%commits; log=%LOG:"=%; authors=%Home%AUTHORS; version=!Version!; shift=3" ^
+    /EXECUTE "%Home:"=%report.epf" ^
+    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS; version=!Version!; shift=3" ^
     /Out %LOG% -NoTruncate
 
 ) ELSE (
     %EXE% ENTERPRISE ^
     /IBConnectionString "File=""%ROOT:"=%\db"";" ^
-    /EXECUTE %Home%report.epf ^
-    /C "report=%Home%report.mxl; home=%Home%commits; log=%LOG:"=%; authors=%Home%AUTHORS; shift=3" ^
+    /EXECUTE "%Home:"=%report.epf" ^
+    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS; shift=3" ^
     /Out %LOG% -NoTruncate
 )
 
@@ -143,7 +147,10 @@ TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
-EXIT /B %ERRORLEVEL%
+IF DEFINED FAILED ^
+    EXIT /B 1
+
+EXIT /B 0
 
 :Usage
 
