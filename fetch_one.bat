@@ -18,6 +18,10 @@ IF EXIST "%Home:"=%version" (
     SET /P Version=1
 )
 
+IF NOT EXIST "%Home:"=%git\.git" (
+    CALL init.bat
+)
+
 IF NOT EXIST "%Home:"=%commits\!Version!" (
     CALL report.bat || (
         SET FAILED
