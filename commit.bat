@@ -48,35 +48,35 @@ IF NOT EXIST "%Home:"=%dumps\%Version%" (
     GOTO :CLEANUP
 )
 
-MOVE "%Home:"=%git\.git" "%Home:"=%dumps\%Version%\.git" >> %LOG%
+MOVE "%Home:"=%git\.git" "%Home:"=%dumps\%Version%\.git" >> %LOG% 2>&1
 
 IF EXIST "%Home:"=%git\.gitignore" (
-    MOVE "%Home:"=%git\.gitignore" "%Home:"=%dumps\%Version%\" >> %LOG%
+    MOVE "%Home:"=%git\.gitignore" "%Home:"=%dumps\%Version%\" >> %LOG% 2>&1
 )
 
 CALL :LOG %LOG% "git files moved"
 
 cd "%Home:"=%dumps\%Version%\"
 
-git add -A >> %LOG%
+git add . >> %LOG% 2>&1
 
 CALL :LOG %LOG% "files added"
 
 IF DEFINED COMMIT_DATE (
-    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" --date=%COMMIT_DATE% >> %LOG% ^
+    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" --date=%COMMIT_DATE% >> %LOG% 2>&1 ^
         && CALL :LOG %LOG% "changes committed"
 ) ELSE (
-    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" >> %LOG% ^
+    git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" >> %LOG% 2>&1 ^
         && CALL :LOG %LOG% "changes committed"
 )
 
 ECHO %Version: =%  > "%Home:"=%version" ^
     && CALL :LOG %LOG% "version file updated"
 
-MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git"  >> %LOG%
+MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git" >> %LOG% 2>&1
 
 IF EXIST "%Home:"=%dumps\%Version%\.gitignore" (
-    MOVE "%Home:"=%dumps\%Version%\.gitignore" "%Home:"=%git\" >> %LOG%
+    MOVE "%Home:"=%dumps\%Version%\.gitignore" "%Home:"=%git\" >> %LOG% 2>&1
 )
 
 CALL :LOG %LOG% "git files moved back to %Home:"=%git"
