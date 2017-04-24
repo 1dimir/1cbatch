@@ -29,11 +29,15 @@ IF NOT EXIST "%Home:"=%git" (
         && CALL :LOG %LOG% "%Home:"=%git created"
 )
 
-RMDIR /S /Q "%Home:"=%git\.git" >> %LOG% 2>&1 ^
-    && CALL :LOG %LOG% "%Home:"=%git\.git removed"
+IF EXIST "%Home:"=%git\.git" (
+    RMDIR /S /Q "%Home:"=%git\.git" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%git\.git removed"
+)
 
-DEL /F /Q /S "%Home:"=%git\.gitignore" >> %LOG% 2>&1 ^
-    && CALL :LOG %LOG% "%Home:"=%git\.gitignore deleted"
+IF EXIST "%Home:"=%git\.gitignore" (
+    DEL /F /Q /S "%Home:"=%git\.gitignore" >> %LOG% 2>&1 ^
+        && CALL :LOG %LOG% "%Home:"=%git\.gitignore deleted"
+)
 
 ECHO "*.cf" >> "%Home:"=%git\.gitignore"
 ECHO "*.bin" >> "%Home:"=%git\.gitignore"
@@ -51,6 +55,9 @@ git init >> %LOG% 2>&1 ^
 
 attrib -H "%Home:"=%git\.git" >> %LOG% 2>&1 ^
     && CALL :LOG %LOG% ".git set visible"
+
+git config --local core.autocrlf false >> %LOG% 2>&1 ^
+    && CALL :LOG %LOG% "autocrlf turned off"
 
 CD "%Home:"=%" >> %LOG% 2>&1 
 
