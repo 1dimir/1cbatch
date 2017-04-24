@@ -111,8 +111,9 @@ TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
 
-IF DEFINED FAILED ^
+IF DEFINED FAILED (
     EXIT /B 1
+)
 
 EXIT /B 0
 

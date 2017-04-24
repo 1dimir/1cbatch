@@ -41,8 +41,9 @@ IF EXIST "%Home:"=%commits\!Version!" (
 
 :CLEANUP
 
-IF DEFINED FAILED ^
+IF DEFINED FAILED (
     EXIT /B 1
+)
 
 EXIT /B 0
 
