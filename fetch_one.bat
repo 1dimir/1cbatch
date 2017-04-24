@@ -24,14 +24,14 @@ IF NOT EXIST "%Home:"=%git\.git" (
 
 IF NOT EXIST "%Home:"=%commits\!Version!" (
     CALL report.bat || (
-        SET FAILED
+        SET FAILED=1
         GOTO :CLEANUP
     )
 )
 
 IF EXIST "%Home:"=%commits\!Version!" (
     CALL dump.bat !Version! || (
-        SET FAILED
+        SET FAILED=1
         GOTO :CLEANUP
     )
     CALL parse.bat !Version!

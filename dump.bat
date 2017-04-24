@@ -95,7 +95,7 @@ FOR /L %%x IN (1, 1, 10) DO (
 )
 
 CALL :LOG %LOG% "Repository operation failed!"
-SET FAILED
+SET FAILED=1
 GOTO :CLEANUP
 
 :SUCCESS
