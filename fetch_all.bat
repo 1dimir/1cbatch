@@ -11,6 +11,8 @@ IF [%1]==[-h] GOTO :USAGE
 :: Home
 SET Home=%~dp0
 
+CD "%Home:"=%"
+
 IF EXIST "%Home:"=%version" (
     SET /P Version=<version
     SET /A Version=!Version: =! + 1
