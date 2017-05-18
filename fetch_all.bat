@@ -24,11 +24,9 @@ IF NOT EXIST "%Home:"=%git\.git" (
     CALL init.bat
 )
 
-IF NOT EXIST "%Home:"=%commits\!Version!" (
-    CALL report.bat || (
-        SET FAILED=1
-        GOTO :EXIT
-    )
+CALL report.bat || (
+  SET FAILED=1
+    GOTO :EXIT
 )
 
 :MAIN_LOOP
@@ -38,9 +36,18 @@ IF EXIST "%Home:"=%commits\!Version!" (
         SET FAILED=1
         GOTO :EXIT
     )
-    CALL parse.bat !Version!
-    CALL commit.bat !Version!
-    CALL cleanup.bat !Version!
+    CALL parse.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
+    CALL commit.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
+    CALL cleanup.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
 ) ELSE (
     GOTO :EXIT
 )

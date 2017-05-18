@@ -64,14 +64,22 @@ CALL :LOG %LOG% "files added"
 
 IF DEFINED COMMIT_DATE (
     git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" --date=%COMMIT_DATE% >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "changes committed"
+        && CALL :LOG %LOG% "changes committed" || (
+            SET FAILED=1
+            CALL :LOG %LOG% "commit failed"
+        )
 ) ELSE (
     git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" >> %LOG% 2>&1 ^
-        && CALL :LOG %LOG% "changes committed"
+        && CALL :LOG %LOG% "changes committed" || (
+            SET FAILED=1
+            CALL :LOG %LOG% "commit failed"
+        )
 )
 
-ECHO %Version: =%  > "%Home:"=%version" ^
-    && CALL :LOG %LOG% "version file updated"
+IF NOT DEFINED FAILED (
+    ECHO %Version: =%  > "%Home:"=%version" ^
+        && CALL :LOG %LOG% "version file updated"
+)
 
 MOVE "%Home:"=%dumps\%Version%\.git" "%Home:"=%git\.git" >> %LOG% 2>&1
 
@@ -91,6 +99,10 @@ TYPE %LOG%
 TYPE %LOG% >> "%~dp0%~n0.log"
 
 RMDIR /S /Q %ROOT% >> "%~dp0%~n0.log" 2>&1
+
+IF DEFINED FAILED (
+    EXIT /B 1
+)
 
 EXIT /B 0
 

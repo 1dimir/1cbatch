@@ -36,9 +36,18 @@ IF EXIST "%Home:"=%commits\!Version!" (
         SET FAILED=1
         GOTO :CLEANUP
     )
-    CALL parse.bat !Version!
-    CALL commit.bat !Version!
-    CALL cleanup.bat !Version!
+    CALL parse.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
+    CALL commit.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
+    CALL cleanup.bat !Version! || (
+        SET FAILED=1
+        GOTO :CLEANUP
+    )
 )
 
 :CLEANUP
