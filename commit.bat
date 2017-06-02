@@ -65,13 +65,13 @@ CALL :LOG %LOG% "files added"
 IF DEFINED COMMIT_DATE (
     git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" --date=%COMMIT_DATE% >> %LOG% 2>&1 ^
         && CALL :LOG %LOG% "changes committed" || (
-            SET FAILED=1
+            rem SET FAILED=1
             CALL :LOG %LOG% "commit failed"
         )
 ) ELSE (
     git commit -F "%Home:"=%commits\%Version%\comment" --author="%Author:"=%" >> %LOG% 2>&1 ^
         && CALL :LOG %LOG% "changes committed" || (
-            SET FAILED=1
+            rem SET FAILED=1
             CALL :LOG %LOG% "commit failed"
         )
 )
