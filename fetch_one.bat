@@ -17,7 +17,7 @@ IF EXIST "%Home:"=%version" (
     SET /P Version=<version
     SET /A Version=!Version: =! + 1
 ) ELSE (
-    SET /P Version=1
+    SET Version=1
 )
 
 IF NOT EXIST "%Home:"=%git\.git" (
