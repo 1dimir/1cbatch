@@ -123,16 +123,20 @@ IF NOT EXIST "%Home:"=%commits" (
 IF DEFINED Version (
     :: start processor in enterprise mode
     %EXE% ENTERPRISE ^
+    /DisableStartupDialogs ^
+    /DisableStartupMessages ^
     /IBConnectionString "File=""%ROOT:"=%\db"";" ^
     /EXECUTE "%Home:"=%report.epf" ^
-    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS; version=!Version!; shift=3" ^
+    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS; version=!Version!" ^
     /Out %LOG% -NoTruncate
 
 ) ELSE (
     %EXE% ENTERPRISE ^
+    /DisableStartupDialogs ^
+    /DisableStartupMessages ^
     /IBConnectionString "File=""%ROOT:"=%\db"";" ^
     /EXECUTE "%Home:"=%report.epf" ^
-    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS; shift=3" ^
+    /C "report=%Home:"=%report.mxl; home=%Home:"=%commits; log=%LOG:"=%; authors=%Home:"=%AUTHORS" ^
     /Out %LOG% -NoTruncate
 )
 
