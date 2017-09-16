@@ -58,7 +58,7 @@ CALL :LOG %LOG% "git files moved"
 
 cd "%Home:"=%dumps\%Version%\"
 
-git add . >> %LOG% 2>&1
+git add . --all >> %LOG% 2>&1
 
 CALL :LOG %LOG% "files added"
 
